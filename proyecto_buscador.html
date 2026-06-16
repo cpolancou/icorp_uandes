@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buscador Semántico de Imágenes · Imagen Corporativa · Uandes</title>
+<meta name="description" content="Motor de búsqueda semántica integrado al banco de fotos institucional de Uandes mediante inteligencia artificial. Sin etiquetado manual, sin migración de datos.">
+<meta property="og:title" content="Buscador Semántico de Imágenes — Uandes">
+<meta property="og:description" content="Búsqueda en lenguaje natural sobre el archivo fotográfico institucional en SharePoint.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ─────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',Arial,sans-serif;color:#243746;line-height:1.6;background:#fff}
+button{cursor:pointer;font-family:inherit}
+
+/* ── VARIABLES ─────────────────────────────────────────── */
+:root{
+  --nd:#131E29; --n:#243746; --nm:#415364; --nl:#758592;
+  --r:#CE0019;  --os:#D6D1CA; --ol:#F4F2ED; --w:#FFFFFF;
+  --mw:1060px;  --px:clamp(20px,5vw,40px);
+  --rad:12px;   --sh:0 2px 16px rgba(0,0,0,0.07);
+}
+
+/* ── LAYOUT ────────────────────────────────────────────── */
+.wrap{max-width:var(--mw);margin:0 auto;padding:0 var(--px)}
+.sec{padding:72px 0}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+
+/* ── FADE-IN ───────────────────────────────────────────── */
+.fi{opacity:0;transform:translateY(16px);transition:opacity .5s ease var(--d,0s),transform .5s ease var(--d,0s)}
+.fi.on{opacity:1;transform:none}
+
+/* ── CHIP ──────────────────────────────────────────────── */
+.chip{display:inline-block;border-radius:999px;padding:4px 16px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+.cr{background:var(--r);color:#fff}
+.cn{background:var(--n);color:#fff}
+.cl{background:var(--ol);color:var(--nm);border:1px solid var(--os)}
+.cg{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
+
+/* ── CARD ──────────────────────────────────────────────── */
+.card{background:#fff;border-radius:var(--rad);padding:22px 20px;border:1px solid var(--os);box-shadow:var(--sh)}
+.card-d{background:var(--n);border-color:var(--nm)}
+.card-r{background:var(--r);border-color:var(--r)}
+
+/* ── NAV ───────────────────────────────────────────────── */
+#nav{position:sticky;top:0;z-index:100;background:rgba(19,30,41,.97);backdrop-filter:blur(8px);border-bottom:2px solid var(--r);height:52px;display:flex;align-items:center}
+.nav-in{max-width:var(--mw);margin:0 auto;padding:0 var(--px);width:100%;display:flex;align-items:center;gap:8px}
+.nav-brand{color:#fff;font-weight:700;font-size:12px;margin-right:auto;letter-spacing:.05em;white-space:nowrap}
+.nav-links{display:flex;gap:2px;flex-wrap:wrap}
+.nb{background:transparent;color:var(--nl);border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:400;transition:all .2s}
+.nb:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nb.on{background:var(--r);color:#fff;font-weight:700}
+
+/* ── HERO ──────────────────────────────────────────────── */
+#hero{background:var(--nd);padding:80px var(--px) 88px;position:relative;overflow:hidden}
+
+.hero-in{position:relative}
+.h1a{font-size:clamp(30px,5.5vw,58px);font-weight:700;color:#fff;line-height:1.1;margin-bottom:6px}
+.h1b{font-size:clamp(30px,5.5vw,58px);font-weight:700;color:var(--r);line-height:1.1;margin-bottom:24px}
+.hero-p{font-size:15px;color:var(--os);max-width:500px;margin-bottom:44px;line-height:1.75}
+/* demo */
+.demo-lbl{font-size:10px;color:var(--nl);margin-bottom:8px;letter-spacing:.08em;text-transform:uppercase}
+.demo-bar{background:rgba(255,255,255,.06);border-radius:10px;border:1px solid rgba(255,255,255,.12);padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:14px;max-width:600px}
+.demo-ico{color:var(--nl);font-size:17px;line-height:1}
+.demo-txt{color:#fff;font-size:14px;flex:1}
+.cursor{animation:blink .8s step-end infinite;color:var(--r)}
+@keyframes blink{50%{opacity:0}}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;min-height:70px;max-width:600px}
+.thumb{width:78px;height:58px;border-radius:6px;border:1px solid rgba(255,255,255,.07);opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s}
+.thumb.on{opacity:.85;transform:none}
+/* stats */
+.stats{display:flex;gap:44px;margin-top:52px;padding-top:28px;border-top:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.stat-n{font-size:26px;font-weight:700;letter-spacing:-.01em}
+.stat-l{font-size:11px;color:var(--nl);margin-top:2px}
+/* ctas */
+.ctas{display:flex;gap:10px;margin-top:36px;flex-wrap:wrap}
+.btn-p{background:var(--r);color:#fff;border:none;border-radius:8px;padding:13px 26px;font-size:13px;font-weight:700;transition:opacity .2s}
+.btn-p:hover{opacity:.88}
+.btn-g{background:transparent;color:var(--os);border:1px solid rgba(214,209,202,.22);border-radius:8px;padding:13px 26px;font-size:13px;transition:border-color .2s}
+.btn-g:hover{border-color:rgba(214,209,202,.5)}
+
+/* ── PROBLEMA ──────────────────────────────────────────── */
+#problema{background:var(--ol)}
+.pc{background:#fff;border-radius:var(--rad);overflow:hidden;border:1px solid var(--os);box-shadow:var(--sh)}
+.ph{background:var(--r);padding:16px 20px}
+.pn{font-size:38px;font-weight:700;color:#fff;line-height:1}
+.pu{font-size:12px;color:rgba(255,255,255,.55);margin-left:6px}
+.pb{padding:16px 20px}
+.pt{font-weight:700;font-size:14px;color:var(--n);margin-bottom:7px}
+.pp{font-size:12.5px;color:var(--nm);line-height:1.65}
+.insight{margin-top:18px;padding:11px 16px;background:#fff;border-radius:8px;border:1px solid var(--os);font-size:12.5px;color:var(--nm);font-style:italic}
+
+/* ── SOLUCIÓN ──────────────────────────────────────────── */
+#solucion{background:#fff}
+.ct{border-radius:var(--rad);overflow:hidden;border:1px solid var(--os);box-shadow:var(--sh)}
+.ch{display:grid;grid-template-columns:minmax(90px,140px) 1fr 1fr;background:var(--ol)}
+.chc{padding:12px 16px;font-weight:700;font-size:11.5px;color:var(--nm)}
+.chc.new{background:var(--n);color:#fff}
+.cr2{display:grid;grid-template-columns:minmax(90px,140px) 1fr 1fr;border-top:1px solid var(--os);cursor:pointer;transition:background .2s}
+.cr2:nth-child(odd){background:#fff}
+.cr2:nth-child(even){background:#FAFAF9}
+.cr2.on{background:#FEF7F7}
+.cc{padding:13px 16px;font-size:12.5px;color:var(--nm)}
+.cc.lbl{font-weight:700;font-size:12px}
+.col-n{border-left:1px solid var(--os);font-weight:500;color:var(--n)}
+.cr2.on .col-o{text-decoration:line-through;color:var(--nl)}
+.cr2.on .col-n{color:var(--r);font-weight:700;background:rgba(206,0,25,.04)}
+.ct-hint{margin-top:10px;font-size:11.5px;color:var(--nl);text-align:center}
+
+/* ── TÉCNICA ───────────────────────────────────────────── */
+#tecnica{background:var(--ol)}
+.s-wrap{background:#fff;border-radius:var(--rad);padding:24px 20px;border:1px solid var(--os);box-shadow:var(--sh);margin-bottom:16px}
+.s-t{font-weight:700;font-size:13px;color:var(--n);margin-bottom:4px}
+.s-s{font-size:12px;color:var(--nl);margin-bottom:16px}
+.svg-sc{width:100%;height:auto;display:block}
+.ph-h{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.ph-tag{display:inline-block;border-radius:999px;padding:3px 11px;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.ph-cost{font-size:15px;font-weight:700;color:var(--r)}
+.ph-cl{font-size:10px;color:var(--nl)}
+.ph-title{font-weight:700;font-size:14px;margin-bottom:10px}
+.pi{display:flex;gap:7px;margin-bottom:6px;font-size:12px}
+.pa{color:var(--r);flex-shrink:0}
+
+/* ── IMPACTO ───────────────────────────────────────────── */
+#impacto{background:var(--n);padding:72px 0}
+.ib{display:inline-block;background:var(--r);color:#fff;border-radius:6px;padding:3px 10px;font-size:10px;font-weight:700;margin-bottom:10px}
+.it{font-weight:700;font-size:14px;color:var(--n);margin-bottom:7px}
+.ip{font-size:12.5px;color:var(--nm);line-height:1.65}
+
+/* ── EQUIPO ────────────────────────────────────────────── */
+#equipo{background:#fff}
+.av{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:17px;font-weight:700}
+.mn{font-weight:700;font-size:13.5px;text-align:center;margin-bottom:4px}
+.mr{font-size:11px;text-align:center;margin-bottom:12px}
+.md{width:30px;height:1px;margin:0 auto 12px}
+.mb{font-size:12px;text-align:center;line-height:1.65}
+
+/* ── COSTOS ────────────────────────────────────────────── */
+#costos{background:var(--ol)}
+.cb{font-size:44px;font-weight:700;line-height:1;margin-bottom:4px}
+.cu{font-size:15px;font-weight:700;margin-bottom:14px}
+.cs{font-size:11px;color:var(--nl);font-style:italic;margin-bottom:12px}
+.cx{font-size:12.5px;line-height:1.65}
+
+/* ── ACTIVACIÓN ────────────────────────────────────────── */
+#activacion{background:var(--nd);padding:72px 0}
+.pb2{border-radius:var(--rad);padding:20px 18px}
+.pb-hi{background:var(--n);border:1px solid var(--nm)}
+.pb-lo{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09)}
+.pt-tags{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+.hito{background:rgba(255,255,255,.05);border-radius:6px;padding:9px 12px;font-size:12px;color:var(--os);font-style:italic;margin-bottom:12px}
+.sb{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;background:rgba(255,255,255,.05);border-radius:10px;border:1px solid rgba(255,255,255,.08)}
+.sn{width:26px;height:26px;border-radius:50%;background:var(--r);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.st{font-size:12.5px;color:var(--os);line-height:1.55}
+
+/* ── TITLES ────────────────────────────────────────────── */
+.h2{font-size:clamp(20px,3.5vw,30px);font-weight:700;color:var(--n);margin:10px 0 32px;line-height:1.2}
+.h2-l{color:#fff}
+.sub{font-size:13.5px;color:var(--nm);max-width:540px;margin-bottom:24px}
+
+/* ── FOOTER ────────────────────────────────────────────── */
+footer{background:var(--nd);border-top:2px solid var(--r);padding:36px var(--px) 24px;text-align:center}
+.fq{font-size:13.5px;font-style:italic;color:var(--os);max-width:500px;margin:0 auto 18px;line-height:1.7}
+.fr{width:32px;height:2px;background:var(--r);margin:0 auto 16px}
+.fc{font-size:11px;color:var(--nl);letter-spacing:.05em}
+
+/* ── RESPONSIVE ────────────────────────────────────────── */
+@media(max-width:640px){
+  .nav-brand{display:none}
+  .nb{font-size:10px;padding:3px 7px}
+  .stats{gap:24px}
+  .g2,.g3{grid-template-columns:1fr}
+  .ch,.cr2{grid-template-columns:90px 1fr}
+  .chc:nth-child(2),.cc.col-o{display:none}
+  .chc.new{border-left:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-in">
+    <span class="nav-brand">Imagen Corporativa · Uandes</span>
+    <div class="nav-links">
+      <button class="nb on" data-s="hero">Inicio</button>
+      <button class="nb" data-s="problema">Problema</button>
+      <button class="nb" data-s="solucion">Solución</button>
+      <button class="nb" data-s="tecnica">Cómo funciona</button>
+      <button class="nb" data-s="impacto">Impacto</button>
+      <button class="nb" data-s="equipo">Equipo</button>
+      <button class="nb" data-s="costos">Costos</button>
+      <button class="nb" data-s="activacion">Activación</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="wrap hero-in">
+    <span class="chip cg">Proyecto · Imagen Corporativa</span>
+    <h1 class="h1a">Buscador Semántico</h1>
+    <h1 class="h1b">de Imágenes</h1>
+    <p class="hero-p">Inteligencia artificial integrada al banco de fotos en SharePoint. Sin etiquetado manual, sin migración de datos. Búsqueda en lenguaje natural.</p>
+    <div class="demo-lbl">Demo — búsqueda en lenguaje natural</div>
+    <div class="demo-bar"><span class="demo-ico">⌕</span><span class="demo-txt"><span id="dt"></span><span class="cursor">|</span></span></div>
+    <div class="thumbs" id="thumbs">
+      <div class="thumb"></div><div class="thumb"></div><div class="thumb"></div>
+      <div class="thumb"></div><div class="thumb"></div><div class="thumb"></div>
+    </div>
+    <div class="stats">
+      <div><div class="stat-n" style="color:var(--nl)">10–30 min</div><div class="stat-l">tiempo actual por búsqueda</div></div>
+      <div><div class="stat-n" style="color:#fff">&lt;&nbsp;1 seg</div><div class="stat-l">con el nuevo sistema</div></div>
+      <div><div class="stat-n" style="color:#fff">~$110 USD</div><div class="stat-l">costo total de infraestructura</div></div>
+    </div>
+    <div class="ctas">
+      <button class="btn-p" onclick="goTo('solucion')">Ver la solución →</button>
+      <button class="btn-g" onclick="goTo('activacion')">Próximos pasos</button>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMA -->
+<section id="problema" class="sec">
+  <div class="wrap">
+    <div class="fi"><span class="chip cr">El problema</span></div>
+    <div class="fi" style="--d:.06s"><h2 class="h2">El costo de la fricción operativa</h2></div>
+    <div class="g3">
+      <div class="fi" style="--d:.08s"><div class="pc"><div class="ph"><span class="pn">10–30</span><span class="pu">min</span></div><div class="pb"><div class="pt">Tiempo perdido</div><div class="pp">Minutos que el equipo consume navegando carpetas antes de encontrar —o no— la imagen correcta.</div></div></div></div>
+      <div class="fi" style="--d:.16s"><div class="pc"><div class="ph"><span class="pn">∞</span><span class="pu">fotos</span></div><div class="pb"><div class="pt">Activos muertos</div><div class="pp">Cientos de fotografías valiosas jamás utilizadas por la dificultad de localizarlas en el archivo.</div></div></div></div>
+      <div class="fi" style="--d:.24s"><div class="pc"><div class="ph"><span class="pn">1→∞</span><span class="pu">riesgo</span></div><div class="pb"><div class="pt">Memoria frágil</div><div class="pp">Alta dependencia en personas específicas que saben dónde está todo. Riesgo institucional latente.</div></div></div></div>
+    </div>
+    <div class="fi" style="--d:.30s"><div class="insight">El sistema actual obliga al equipo a reutilizar las mismas fotos o financiar nuevas sesiones fotográficas evitables.</div></div>
+  </div>
+</section>
+
+<!-- SOLUCIÓN -->
+<section id="solucion" class="sec">
+  <div class="wrap">
+    <div class="fi"><span class="chip cn">La solución</span></div>
+    <div class="fi" style="--d:.06s"><h2 class="h2">Un cambio de paradigma en la gestión del archivo</h2></div>
+    <div class="fi" style="--d:.10s"><p class="sub">De buscar por nombre de archivo a buscar por significado visual.</p></div>
+    <div class="fi" style="--d:.14s">
+      <div class="ct" id="ct">
+        <div class="ch"><div class="chc"></div><div class="chc">Sin búsqueda semántica</div><div class="chc new">Con búsqueda semántica ✦</div></div>
+        <div class="cr2" data-r="0"><div class="cc lbl">Input</div><div class="cc col-o">Palabras clave y nombres de archivo</div><div class="cc col-n">Lenguaje natural: «ceremonia de graduación al aire libre»</div></div>
+        <div class="cr2" data-r="1"><div class="cc lbl">Dependencia</div><div class="cc col-o">Etiquetado manual exhaustivo previo</div><div class="cc col-n">La IA lee la imagen automáticamente</div></div>
+        <div class="cr2" data-r="2"><div class="cc lbl">Velocidad</div><div class="cc col-o">Minutos de navegación por carpetas</div><div class="cc col-n">Resultados precisos en milisegundos</div></div>
+        <div class="cr2" data-r="3"><div class="cc lbl">Infraestructura</div><div class="cc col-o">Taxonomía de carpetas rígida</div><div class="cc col-n">Funciona sobre el archivo tal como está hoy</div></div>
+      </div>
+      <p class="ct-hint">Haz clic en una fila para destacar la diferencia</p>
+    </div>
+  </div>
+</section>
+
+<!-- TÉCNICA -->
+<section id="tecnica" class="sec">
+  <div class="wrap">
+    <div class="fi"><span class="chip cr">Cómo funciona</span></div>
+    <div class="fi" style="--d:.06s"><h2 class="h2">Embeddings: el corazón del sistema</h2></div>
+    <div class="g3" style="margin-bottom:28px">
+      <div class="fi" style="--d:.08s"><div class="card" style="height:100%"><div style="width:32px;height:32px;border-radius:50%;background:var(--r);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;margin-bottom:12px">1</div><div style="font-weight:700;font-size:14px;color:var(--n);margin-bottom:7px">Imagen</div><div style="font-size:12.5px;color:var(--nm);line-height:1.65">Una fotografía del archivo sin etiquetas ni nombre descriptivo.</div></div></div>
+      <div class="fi" style="--d:.16s"><div class="card card-d" style="height:100%"><div style="width:32px;height:32px;border-radius:50%;background:#fff;color:var(--r);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;margin-bottom:12px">2</div><div style="font-weight:700;font-size:14px;color:#fff;margin-bottom:7px">Modelo de IA</div><div style="font-size:12.5px;color:rgba(214,209,202,.8);line-height:1.65">Un modelo de visión por computadora analiza el contenido visual completo.</div></div></div>
+      <div class="fi" style="--d:.24s"><div class="card card-r" style="height:100%"><div style="width:32px;height:32px;border-radius:50%;background:#fff;color:var(--r);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;margin-bottom:12px">3</div><div style="font-weight:700;font-size:14px;color:#fff;margin-bottom:7px">Vector semántico</div><div style="font-size:12.5px;color:rgba(255,255,255,.85);line-height:1.65">[0.84, −0.21, 0.95…] — coordenadas que capturan el significado visual.</div></div></div>
+    </div>
+    <div class="fi" style="--d:.28s">
+      <div class="s-wrap">
+        <div class="s-t">Espacio vectorial — sin ninguna etiqueta previa</div>
+        <div class="s-s">Imágenes de contenido similar quedan agrupadas automáticamente.</div>
+        <svg viewBox="0 0 500 270" class="svg-sc" role="img" aria-label="Scatter plot mostrando tres grupos: Deportes (arriba derecha), Graduaciones similares (centro derecha) y Laboratorios (abajo izquierda)">
+          <line x1="28" y1="8" x2="28" y2="248" stroke="#D6D1CA" stroke-width="1"/>
+          <line x1="28" y1="248" x2="490" y2="248" stroke="#D6D1CA" stroke-width="1"/>
+          <polygon points="24,14 28,7 32,14" fill="#D6D1CA"/>
+          <polygon points="484,244 491,248 484,252" fill="#D6D1CA"/>
+          <!-- Laboratorios (bottom left) -->
+          <circle cx="116" cy="209" r="7.5" fill="#758592" opacity=".82"/><circle cx="134" cy="201" r="7.5" fill="#758592" opacity=".82"/><circle cx="108" cy="217" r="7.5" fill="#758592" opacity=".82"/><circle cx="126" cy="212" r="7.5" fill="#758592" opacity=".82"/><circle cx="122" cy="203" r="7.5" fill="#758592" opacity=".82"/>
+          <text x="148" y="211" font-size="12.5" fill="#758592" font-weight="600" font-family="DM Sans,Arial,sans-serif">Laboratorios</text>
+          <!-- Graduaciones (center) -->
+          <circle cx="338" cy="145" r="8.5" fill="#CE0019" opacity=".9"/><circle cx="356" cy="135" r="7.5" fill="#CE0019" opacity=".85"/><circle cx="326" cy="155" r="7.5" fill="#CE0019" opacity=".85"/><circle cx="346" cy="140" r="7.5" fill="#CE0019" opacity=".85"/><circle cx="332" cy="150" r="7.5" fill="#CE0019" opacity=".85"/>
+          <text x="368" y="142" font-size="12.5" fill="#CE0019" font-weight="700" font-family="DM Sans,Arial,sans-serif">Graduaciones ●</text>
+          <!-- Deportes (top right) -->
+          <circle cx="408" cy="64" r="7.5" fill="#415364" opacity=".85"/><circle cx="426" cy="53" r="7.5" fill="#415364" opacity=".85"/><circle cx="398" cy="72" r="7.5" fill="#415364" opacity=".85"/><circle cx="416" cy="58" r="7.5" fill="#415364" opacity=".85"/><circle cx="404" cy="67" r="7.5" fill="#415364" opacity=".85"/>
+          <text x="436" y="61" font-size="12.5" fill="#415364" font-weight="600" font-family="DM Sans,Arial,sans-serif">Deportes</text>
+        </svg>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="fi" style="--d:.10s"><div class="card card-d"><div class="ph-h"><span class="ph-tag" style="background:var(--r);color:#fff">Fase 1 — Una sola vez</span><div><div class="ph-cost">~$100 USD</div><div class="ph-cl">pago único</div></div></div><div class="ph-title" style="color:#fff">Indexación</div><div class="pi" style="color:rgba(214,209,202,.8)"><span class="pa">→</span>Todas las imágenes procesadas con IA.</div><div class="pi" style="color:rgba(214,209,202,.8)"><span class="pa">→</span>Cada imagen → vector semántico en la BD.</div><div class="pi" style="color:rgba(214,209,202,.8)"><span class="pa">→</span>No se repite salvo nuevas imágenes masivas.</div></div></div>
+      <div class="fi" style="--d:.18s"><div class="card"><div class="ph-h"><span class="ph-tag" style="background:var(--n);color:#fff">Fase 2 — Operación continua</span><div><div class="ph-cost">~$10 USD/mes</div><div class="ph-cl">costo mensual</div></div></div><div class="ph-title" style="color:var(--n)">Consulta en tiempo real</div><div class="pi" style="color:var(--nm)"><span class="pa">→</span>Usuario escribe en lenguaje natural.</div><div class="pi" style="color:var(--nm)"><span class="pa">→</span>Sistema vectoriza y calcula similitud.</div><div class="pi" style="color:var(--nm)"><span class="pa">→</span>Resultados relevantes en milisegundos.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACTO -->
+<section id="impacto" class="sec">
+  <div class="wrap">
+    <div class="fi"><span class="chip cg">Impacto esperado</span></div>
+    <div class="fi" style="--d:.06s"><h2 class="h2 h2-l">Impacto operativo en múltiples dimensiones</h2></div>
+    <div class="g3" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr))">
+      <div class="fi" style="--d:.08s"><div class="card"><span class="ib">30 min → ms</span><div class="it">Eficiencia radical</div><div class="ip">Reducción drástica de tiempos de búsqueda. Liberación de horas-hombre semanales para tareas de mayor valor.</div></div></div>
+      <div class="fi" style="--d:.16s"><div class="card"><span class="ib">0 etiquetas</span><div class="it">Independencia</div><div class="ip">Elimina la deuda técnica por nomenclaturas inconsistentes. Funciona sobre el archivo tal como está hoy.</div></div></div>
+      <div class="fi" style="--d:.24s"><div class="card"><span class="ib">100% acceso</span><div class="it">Democratización</div><div class="ip">Cualquier miembro del equipo puede buscar con sus propias palabras, sin depender de expertos del archivo.</div></div></div>
+      <div class="fi" style="--d:.32s"><div class="card"><span class="ib">Archivo vivo</span><div class="it">Aprovechamiento</div><div class="ip">Fotografías inaccesibles u olvidadas vuelven a estar disponibles. El trabajo histórico cobra nuevo valor.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EQUIPO -->
+<section id="equipo" class="sec">
+  <div class="wrap">
+    <div class="fi"><span class="chip cr">El equipo</span></div>
+    <div class="fi" style="--d:.06s"><h2 class="h2">Talento académico y dirección institucional</h2></div>
+    <div class="g3">
+      <div class="fi" style="--d:.08s"><div class="card card-d" style="text-align:center"><div class="av" style="background:rgba(255,255,255,.14);color:#fff;border:2px solid rgba(255,255,255,.18)">MR</div><div class="mn" style="color:#fff">Prof. Matías Recabarren</div><div class="mr" style="color:rgba(214,209,202,.6)">Asesor Técnico</div><div class="md" style="background:rgba(255,255,255,.1)"></div><div class="mb" style="color:rgba(214,209,202,.78)">Decisiones de arquitectura, selección de modelos de IA y orientación técnica de alto nivel.</div></div></div>
+      <div class="fi" style="--d:.16s"><div class="card card-r" style="text-align:center"><div class="av" style="background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.2)">CP</div><div class="mn" style="color:#fff">Catalina Polanco</div><div class="mr" style="color:rgba(255,255,255,.6)">Directora · Imagen Corporativa</div><div class="md" style="background:rgba(255,255,255,.12)"></div><div class="mb" style="color:rgba(255,255,255,.8)">Dirección general, definición de casos de uso, seguimiento semanal y evaluación de resultados.</div></div></div>
+      <div class="fi" style="--d:.24s"><div class="card" style="text-align:center"><div class="av" style="background:var(--ol);color:var(--r);border:2px solid var(--os)">2×</div><div class="mn" style="color:var(--n)">Practicantes de Ingeniería</div><div class="mr" style="color:var(--nl)">4.° año, 7.° semestre — Ing. en Computación</div><div class="md" style="background:var(--os)"></div><div class="mb" style="color:var(--nm)">Ejecución del código, algoritmia, bases de datos vectoriales e integración con SharePoint.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- COSTOS -->
+<section id="costos" class="sec">
+  <div class="wrap">
+    <div class="fi"><span class="chip cn">Estructura de costos</span></div>
+    <div class="fi" style="--d:.06s"><h2 class="h2">IA moderna a un precio fraccional</h2></div>
+    <div class="g2" style="margin-bottom:18px">
+      <div class="fi" style="--d:.08s"><div class="card card-d" style="padding:28px 24px"><div class="cb" style="color:#fff">$600.000</div><div class="cu" style="color:var(--os)">CLP</div><span class="chip cr" style="margin-bottom:8px">Capital humano</span><div class="cs">2 practicantes × $300.000 c/u (total práctica)</div><div class="cx" style="color:var(--os)">El núcleo del costo es la oportunidad formativa: ingeniería universitaria aplicada a un problema real de la institución.</div></div></div>
+      <div class="fi" style="--d:.16s"><div class="card" style="padding:28px 24px"><div class="cb" style="color:var(--r)">~$110</div><div class="cu" style="color:var(--nm)">USD</div><span class="chip cn" style="margin-bottom:8px">Infraestructura IA</span><div class="cs">$100 embed único + $10/mes mantención</div><div class="cx" style="color:var(--nm)">Procesamiento IA del archivo fotográfico completo (pago único) más mantención mensual de la infraestructura.</div></div></div>
+    </div>
+    <div class="fi" style="--d:.24s"><p style="text-align:center;font-size:13px;font-style:italic;color:var(--nm)">Un proyecto tecnológicamente sofisticado ejecutado a una fracción del costo del mercado tradicional.</p></div>
+  </div>
+</section>
+
+<!-- ACTIVACIÓN -->
+<section id="activacion" class="sec">
+  <div class="wrap">
+    <div class="fi"><span class="chip cg">Cronograma &amp; activación</span></div>
+    <div class="fi" style="--d:.06s"><h2 class="h2 h2-l">De prototipo a despliegue</h2></div>
+    <div class="g2" style="margin-bottom:40px">
+      <div class="fi" style="--d:.08s"><div class="pb2 pb-hi"><div class="pt-tags"><span class="ph-tag" style="background:var(--r);color:#fff">Julio 2026</span><span class="ph-tag" style="border:1px solid var(--nm);color:var(--nl)">full-time</span></div><div class="ph-title" style="color:#fff">Fase intensiva</div><div class="hito">Hito: Prototipo funcional integrado a SharePoint al cierre de julio.</div><div class="pi" style="color:var(--os)"><span class="pa">→</span>Dedicación exclusiva de los practicantes.</div><div class="pi" style="color:var(--os)"><span class="pa">→</span>Procesamiento inicial del archivo (embeddings).</div><div class="pi" style="color:var(--os)"><span class="pa">→</span>Motor base e interfaz de búsqueda.</div></div></div>
+      <div class="fi" style="--d:.16s"><div class="pb2 pb-lo"><div class="pt-tags"><span class="ph-tag" style="background:var(--nm);color:#fff">2.° semestre 2026</span><span class="ph-tag" style="border:1px solid rgba(255,255,255,.2);color:var(--nl)">part-time</span></div><div class="ph-title" style="color:#fff">Fase de iteración</div><div class="hito">Hito: Despliegue definitivo y traspaso operacional.</div><div class="pi" style="color:var(--os)"><span class="pa">→</span>Compatible con la carga académica.</div><div class="pi" style="color:var(--os)"><span class="pa">→</span>Ajustes de usabilidad y retroalimentación.</div><div class="pi" style="color:var(--os)"><span class="pa">→</span>Refinamiento de algoritmos y despliegue.</div></div></div>
+    </div>
+    <div class="fi" style="--d:.18s"><p style="font-weight:700;font-size:16px;color:#fff;margin-bottom:16px">Próximos pasos</p></div>
+    <div class="g2">
+      <div class="fi" style="--d:.08s"><div class="sb"><div class="sn">1</div><div class="st">Confirmar financiamiento y formalizar la práctica pre-profesional.</div></div></div>
+      <div class="fi" style="--d:.12s"><div class="sb"><div class="sn">2</div><div class="st">Selección de alumnos junto al Prof. Recabarren.</div></div></div>
+      <div class="fi" style="--d:.16s"><div class="sb"><div class="sn">3</div><div class="st">Kickoff con Imagen Corporativa: definición de criterios de búsqueda.</div></div></div>
+      <div class="fi" style="--d:.20s"><div class="sb"><div class="sn">4</div><div class="st">Inicio del desarrollo intensivo en julio de 2026.</div></div></div>
+      <div class="fi" style="--d:.24s"><div class="sb"><div class="sn">5</div><div class="st">Demostración del prototipo funcional al cierre de julio.</div></div></div>
+      <div class="fi" style="--d:.28s"><div class="sb"><div class="sn">6</div><div class="st">Ciclo de iteración, retroalimentación y despliegue definitivo.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fq">"Transformando nuestro archivo fotográfico: de un depósito inerte a un motor de búsqueda inteligente."</div>
+  <div class="fr"></div>
+  <div class="fc">Imagen Corporativa · Universidad de los Andes · 2026</div>
+</footer>
+
+<script>
+// ── GOTO ──────────────────────────────────────────────────────
+function goTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+
+// ── NAV ───────────────────────────────────────────────────────
+const nbs=document.querySelectorAll('.nb');
+const sids=['hero','problema','solucion','tecnica','impacto','equipo','costos','activacion'];
+function updNav(){
+  let cur=sids[0];
+  sids.forEach(id=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=80)cur=id;});
+  nbs.forEach(b=>b.classList.toggle('on',b.dataset.s===cur));
+}
+nbs.forEach(b=>b.addEventListener('click',()=>goTo(b.dataset.s)));
+window.addEventListener('scroll',updNav,{passive:true});
+
+// ── FADE IN ───────────────────────────────────────────────────
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on');});},{threshold:.12});
+document.querySelectorAll('.fi').forEach(el=>obs.observe(el));
+
+// ── COMPARE TABLE ─────────────────────────────────────────────
+document.querySelectorAll('.cr2').forEach(r=>{
+  r.addEventListener('click',()=>{
+    const active=r.classList.contains('on');
+    document.querySelectorAll('.cr2').forEach(x=>x.classList.remove('on'));
+    if(!active)r.classList.add('on');
+  });
+});
+
+// ── TYPEWRITER ────────────────────────────────────────────────
+const QUERIES=['fotografías de graduación al aire libre','ceremonias con autoridades en el campus','sesiones de laboratorio con alumnos','actividades deportivas universitarias','eventos de capilla y pastoral'];
+const PALETTES=[['#415364','#758592','#D6D1CA','#758592','#415364','#D6D1CA'],['#CE0019','#758592','#D6D1CA','#415364','#CE0019','#758592'],['#131E29','#415364','#758592','#D6D1CA','#131E29','#415364'],['#758592','#D6D1CA','#415364','#131E29','#D6D1CA','#758592'],['#415364','#CE0019','#758592','#D6D1CA','#CE0019','#415364']];
+const dt=document.getElementById('dt');
+const thumbEls=document.querySelectorAll('.thumb');
+let qi=0;
+function run(){
+  const q=QUERIES[qi],pal=PALETTES[qi];
+  let i=0;
+  dt.textContent='';
+  thumbEls.forEach(t=>t.classList.remove('on'));
+  const t=setInterval(()=>{
+    dt.textContent=q.slice(0,++i);
+    if(i>=q.length){
+      clearInterval(t);
+      thumbEls.forEach((th,idx)=>{th.style.background=pal[idx];setTimeout(()=>th.classList.add('on'),idx*70+300);});
+      setTimeout(()=>{thumbEls.forEach(th=>th.classList.remove('on'));setTimeout(()=>{qi=(qi+1)%QUERIES.length;run();},420);},3300);
+    }
+  },38);
+}
+run();
+</script>
+</body>
+</html>
