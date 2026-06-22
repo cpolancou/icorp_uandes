@@ -6,7 +6,7 @@ Este repositorio contiene páginas estáticas publicadas a través de GitHub Pag
 
 ### Opción Rápida: Generador de Enlaces
 
-[**Abre el generador →**](https://cpolancou.github.io/icorp_uandes/path_generator.html)
+<a href="https://cpolancou.github.io/icorp_uandes/path_generator.html" target="_blank">**Abre el generador →**</a>
 
 Ingresa la ruta del archivo y copia el enlace generado automáticamente.
 
