@@ -4,7 +4,13 @@ Este repositorio contiene páginas estáticas publicadas a través de GitHub Pag
 
 ## Acceso a las Páginas
 
-### Instrucciones
+### Opción Rápida: Generador de Enlaces
+
+[**Abre el generador →**](https://cpolancou.github.io/icorp_uandes/path_generator.html)
+
+Ingresa la ruta del archivo y copia el enlace generado automáticamente.
+
+### Instrucciones Manuales
 
 Para acceder a cualquier página de este repositorio, sigue estos pasos:
 
